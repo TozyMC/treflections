@@ -6,19 +6,19 @@ import static xyz.tozymc.reflect.accessor.util.ErrorMessages.constructorAccessFa
 import static xyz.tozymc.reflect.accessor.util.ErrorMessages.fieldAccessFailure;
 import static xyz.tozymc.reflect.accessor.util.ErrorMessages.methodAccessFailure;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import xyz.tozymc.reflect.accessor.Accessor.Query;
-import xyz.tozymc.reflect.accessor.Accessor.QueryBuilder;
-import xyz.tozymc.reflect.accessor.Accessor.Type;
-import xyz.tozymc.util.Preconditions;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import xyz.tozymc.reflect.accessor.Accessor.Query;
+import xyz.tozymc.reflect.accessor.Accessor.QueryBuilder;
+import xyz.tozymc.reflect.accessor.Accessor.Type;
+import xyz.tozymc.util.Preconditions;
 
 public final class Accessors {
 
@@ -57,60 +57,45 @@ public final class Accessors {
   }
 
   public static @NotNull FieldAccessor accessField(Query @NotNull [] queries) {
-    FieldAccessor accessed = null;
     for (Query query : queries) {
+      FieldAccessor accessed = null;
       try {
         accessed = accessField(query);
       } catch (Exception ignored) {
       }
       if (accessed != null) {
-        break;
+        return accessed;
       }
     }
-    if (accessed == null) {
-      throw new RuntimeException("Queries: " + Arrays.toString(queries),
-          new NoSuchFieldException());
-    }
-
-    return accessed;
+    throw new RuntimeException("Queries: " + Arrays.toString(queries), new NoSuchFieldException());
   }
 
   public static @NotNull ConstructorAccessor<?> accessConstructor(Query @NotNull [] queries) {
-    ConstructorAccessor<?> accessed = null;
     for (Query query : queries) {
+      ConstructorAccessor<?> accessed = null;
       try {
         accessed = accessConstructor(query);
       } catch (Exception ignored) {
       }
       if (accessed != null) {
-        break;
+        return accessed;
       }
     }
-    if (accessed == null) {
-      throw new RuntimeException("Queries: " + Arrays.toString(queries),
-          new NoSuchMethodException());
-    }
-
-    return accessed;
+    throw new RuntimeException("Queries: " + Arrays.toString(queries), new NoSuchMethodException());
   }
 
   public static @NotNull MethodAccessor accessMethod(Query @NotNull [] queries) {
-    MethodAccessor accessed = null;
     for (Query query : queries) {
+      MethodAccessor accessed = null;
       try {
         accessed = accessMethod(query);
       } catch (Exception ignored) {
       }
       if (accessed != null) {
-        break;
+        return accessed;
       }
     }
-    if (accessed == null) {
-      throw new RuntimeException("Queries: " + Arrays.toString(queries),
-          new NoSuchMethodException());
-    }
-
-    return accessed;
+    throw new RuntimeException("Queries: " + Arrays.toString(queries), new NoSuchMethodException());
   }
 
   public static FieldAccessor accessField(@NotNull Query query) {
@@ -121,16 +106,14 @@ public final class Accessors {
       return (FieldAccessor) accessedObjects.get(query);
     }
 
-    Field field;
     try {
-      field = query.clazz().getDeclaredField(query.name());
+      Field field = query.clazz().getDeclaredField(query.name());
+      FieldAccessor accessed = new FieldAccessor(field);
+      accessedObjects.put(query, accessed);
+      return accessed;
     } catch (NoSuchFieldException e) {
       throw new RuntimeException(fieldAccessFailure(query), e.getCause());
     }
-
-    FieldAccessor accessed = new FieldAccessor(field);
-    accessedObjects.put(query, accessed);
-    return accessed;
   }
 
   @SuppressWarnings("unchecked")
@@ -141,16 +124,15 @@ public final class Accessors {
       return (ConstructorAccessor<T>) accessedObjects.get(query);
     }
 
-    Constructor<T> constructor;
     try {
-      constructor = ((Class<T>) query.clazz()).getDeclaredConstructor(query.paramTypes());
+      Constructor<T> constructor = ((Class<T>) query.clazz()).getDeclaredConstructor(
+          query.paramTypes());
+      ConstructorAccessor<T> accessed = new ConstructorAccessor<>(constructor);
+      accessedObjects.put(query, accessed);
+      return accessed;
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(constructorAccessFailure(query), e.getCause());
     }
-
-    ConstructorAccessor<T> accessed = new ConstructorAccessor<>(constructor);
-    accessedObjects.put(query, accessed);
-    return accessed;
   }
 
   public static MethodAccessor accessMethod(@NotNull Query query) {
@@ -161,15 +143,13 @@ public final class Accessors {
       return (MethodAccessor) accessedObjects.get(query);
     }
 
-    Method method;
     try {
-      method = query.clazz().getDeclaredMethod(query.name(), query.paramTypes());
+      Method method = query.clazz().getDeclaredMethod(query.name(), query.paramTypes());
+      MethodAccessor accessed = new MethodAccessor(method);
+      accessedObjects.put(query, accessed);
+      return accessed;
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(methodAccessFailure(query), e.getCause());
     }
-
-    MethodAccessor accessed = new MethodAccessor(method);
-    accessedObjects.put(query, accessed);
-    return accessed;
   }
 }
