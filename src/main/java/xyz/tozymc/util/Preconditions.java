@@ -1,9 +1,9 @@
 package xyz.tozymc.util;
 
+import java.util.Arrays;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 @SuppressWarnings("UnusedReturnValue")
 public final class Preconditions {
@@ -37,6 +37,20 @@ public final class Preconditions {
   public static void checkArgument(boolean expression, String template, Object... args) {
     if (!expression) {
       throw new IllegalArgumentException(formatMessage(template, args));
+    }
+  }
+
+  @Contract(value = "false, _ -> fail", pure = true)
+  public static void checkState(boolean expression, String message) {
+    if (!expression) {
+      throw new IllegalStateException(message);
+    }
+  }
+
+  @Contract("false, _, _ -> fail")
+  public static void checkState(boolean expression, String template, Object... args) {
+    if (!expression) {
+      throw new IllegalStateException(formatMessage(template, args));
     }
   }
 
