@@ -9,10 +9,13 @@ public final class AccessUtil {
 
   private AccessUtil() {}
 
-  @Contract("_ -> param1")
+  @Contract("null -> null")
   public static <T extends AccessibleObject> @Nullable T forceAccess(@Nullable T accessibleObj) {
     if (accessibleObj == null) {
       return null;
+    }
+    if (accessibleObj.isAccessible()) {
+      return accessibleObj;
     }
     accessibleObj.setAccessible(true);
     return accessibleObj;
