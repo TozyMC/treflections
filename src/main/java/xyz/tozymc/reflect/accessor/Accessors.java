@@ -6,19 +6,19 @@ import static xyz.tozymc.reflect.accessor.util.ErrorMessages.constructorAccessFa
 import static xyz.tozymc.reflect.accessor.util.ErrorMessages.fieldAccessFailure;
 import static xyz.tozymc.reflect.accessor.util.ErrorMessages.methodAccessFailure;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import xyz.tozymc.reflect.accessor.Accessor.Query;
 import xyz.tozymc.reflect.accessor.Accessor.QueryBuilder;
 import xyz.tozymc.reflect.accessor.Accessor.Type;
 import xyz.tozymc.util.Preconditions;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Accessors {
 
@@ -44,12 +44,6 @@ public final class Accessors {
     return accessField(QueryBuilder.builder(clazz).type(FIELD).name(name).build());
   }
 
-  public static FieldAccessor accessField(@NotNull Class<?> clazz, @NotNull String name,
-      @NotNull Class<?> fieldType) {
-    return accessField(
-        QueryBuilder.builder(clazz).type(FIELD).name(name).returnType(fieldType).build());
-  }
-
   public static <T> ConstructorAccessor<T> accessConstructor(@NotNull Class<?> clazz,
       @NotNull Class<?>... paramTypes) {
     return accessConstructor(
@@ -60,17 +54,6 @@ public final class Accessors {
       @NotNull Class<?>... paramTypes) {
     return accessMethod(
         QueryBuilder.builder(clazz).type(METHOD).name(name).paramTypes(paramTypes).build());
-  }
-
-  public static MethodAccessor accessMethod(@NotNull Class<?> clazz, @NotNull Class<?> rType,
-      @NotNull String name, @NotNull Class<?>... paramTypes) {
-    return accessMethod(
-        QueryBuilder.builder(clazz)
-            .type(METHOD)
-            .name(name)
-            .paramTypes(paramTypes)
-            .returnType(rType)
-            .build());
   }
 
   public static @NotNull FieldAccessor accessField(Query @NotNull [] queries) {
@@ -145,11 +128,6 @@ public final class Accessors {
       throw new RuntimeException(fieldAccessFailure(query), e.getCause());
     }
 
-    Class<?> rType = query.returnType();
-    if (rType != null && field.getType() != rType) {
-      throw new RuntimeException(fieldAccessFailure(query), new NoSuchFieldException());
-    }
-
     FieldAccessor accessed = new FieldAccessor(field);
     accessedObjects.put(query, accessed);
     return accessed;
@@ -188,11 +166,6 @@ public final class Accessors {
       method = query.clazz().getDeclaredMethod(query.name(), query.paramTypes());
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(methodAccessFailure(query), e.getCause());
-    }
-
-    Class<?> rType = query.returnType();
-    if (rType != null && !method.getReturnType().equals(rType)) {
-      throw new RuntimeException(methodAccessFailure(query), new NoSuchMethodException());
     }
 
     MethodAccessor accessed = new MethodAccessor(method);

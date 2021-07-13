@@ -18,15 +18,12 @@ public interface Accessor {
     private final Type type;
     private final String name;
     private final Class<?>[] paramTypes;
-    private final Class<?> returnType;
 
-    private Query(Class<?> clazz, @NotNull Type type, String name, Class<?>[] paramTypes,
-        Class<?> returnType) {
+    private Query(Class<?> clazz, @NotNull Type type, String name, Class<?>[] paramTypes) {
       this.clazz = clazz;
       this.type = type;
       this.name = name;
       this.paramTypes = paramTypes;
-      this.returnType = returnType;
     }
 
     @NotNull
@@ -47,9 +44,6 @@ public interface Accessor {
       return paramTypes;
     }
 
-    public Class<?> returnType() {
-      return returnType;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -62,12 +56,12 @@ public interface Accessor {
       Query query = (Query) o;
       return Objects.equals(clazz, query.clazz) && type == query.type
           && Objects.equals(name, query.name) && Arrays.equals(paramTypes,
-          query.paramTypes) && Objects.equals(returnType, query.returnType);
+          query.paramTypes);
     }
 
     @Override
     public int hashCode() {
-      int result = Objects.hash(clazz, type, name, returnType);
+      int result = Objects.hash(clazz, type, name);
       result = 31 * result + Arrays.hashCode(paramTypes);
       return result;
     }
@@ -79,7 +73,6 @@ public interface Accessor {
           ", type=" + type +
           (name.isEmpty() ? "" : ", name='" + name + '\'') +
           (paramTypes.length == 0 ? "" : ", paramTypes=" + Arrays.toString(paramTypes)) +
-          (returnType == null ? "" : ", returnType=" + returnType) +
           '}';
     }
   }
@@ -90,7 +83,6 @@ public interface Accessor {
     private Type type = null;
     private String name = "";
     private Class<?>[] paramTypes = new Class[0];
-    private Class<?> returnType = null;
 
     QueryBuilder(@NotNull Class<?> clazz) {
       this.clazz = clazz;
@@ -104,8 +96,7 @@ public interface Accessor {
     public static @NotNull QueryBuilder builder(@NotNull Query query) {
       return builder(query.clazz).type(query.type)
           .name(query.name)
-          .paramTypes(query.paramTypes)
-          .returnType(query.returnType);
+          .paramTypes(query.paramTypes);
     }
 
     public QueryBuilder name(@NotNull String name) {
@@ -123,11 +114,6 @@ public interface Accessor {
       return this;
     }
 
-    public QueryBuilder returnType(@NotNull Class<?> rType) {
-      this.returnType = rType;
-      return this;
-    }
-
     public Query build() {
       if (type == null) {
         if (!name.isEmpty()) {
@@ -135,7 +121,7 @@ public interface Accessor {
         }
         type = Type.METHOD;
       }
-      return new Query(clazz, type, name, paramTypes, returnType);
+      return new Query(clazz, type, name, paramTypes);
     }
   }
 }
