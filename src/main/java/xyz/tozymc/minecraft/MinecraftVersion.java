@@ -4,41 +4,39 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
 public enum MinecraftVersion {
   UNKNOWN(-1),
 
-  V1_7_R1(1071),
-  V1_7_R2(1072),
-  V1_7_R3(1073),
-  V1_7_R4(1074),
+  v1_7_R1(1071),
+  v1_7_R2(1072),
+  v1_7_R3(1073),
+  v1_7_R4(1074),
 
-  V1_8_R1(1081),
-  V1_8_R2(1082),
-  V1_8_R3(1083),
+  v1_8_R1(1081),
+  v1_8_R2(1082),
+  v1_8_R3(1083),
 
-  V1_9_R1(1091),
-  V1_9_R2(1092),
+  v1_9_R1(1091),
+  v1_9_R2(1092),
 
-  V1_10_R1(1101),
+  v1_10_R1(1101),
 
-  V1_11_R1(1111),
+  v1_11_R1(1111),
 
-  V1_12_R1(1121),
+  v1_12_R1(1121),
 
-  V1_13_R1(1131),
-  V1_13_R2(1132),
+  v1_13_R1(1131),
+  v1_13_R2(1132),
 
-  V1_14_R1(1141),
+  v1_14_R1(1141),
 
-  V1_15_R1(1151),
+  v1_15_R1(1151),
 
-  V1_16_R1(1161),
-  V1_16_R2(1162),
-  V1_16_R3(1163),
+  v1_16_R1(1161),
+  v1_16_R2(1162),
+  v1_16_R3(1163),
 
-  V1_17_R1(1164, false);
+  v1_17_R1(1164, false);
 
   public static final MinecraftVersion CURRENT_VERSION;
   private static final String NET_MINECRAFT_PACKAGE = "net.minecraft";
@@ -49,7 +47,7 @@ public enum MinecraftVersion {
     String packageVersion = "";
     try {
       String ocbPackage = Bukkit.getServer().getClass().getPackage().getName();
-      packageVersion = ocbPackage.substring(ocbPackage.lastIndexOf('.')).toUpperCase(Locale.ROOT);
+      packageVersion = ocbPackage.substring(ocbPackage.lastIndexOf('.') + 1);
     } catch (Exception e) {
       Bukkit.getLogger().warning("Cannot detect server version!");
     }
