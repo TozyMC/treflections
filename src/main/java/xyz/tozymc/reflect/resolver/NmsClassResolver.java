@@ -6,7 +6,7 @@ import xyz.tozymc.minecraft.MinecraftVersion;
 
 public class NmsClassResolver extends ClassResolver {
 
-  protected NmsClassResolver() {
+  private NmsClassResolver() {
     super(MinecraftVersion.getVersion().getNmsPackage());
   }
 

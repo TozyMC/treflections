@@ -6,7 +6,7 @@ import xyz.tozymc.minecraft.MinecraftVersion;
 
 public class OcbClassResolver extends ClassResolver {
 
-  protected OcbClassResolver() {
+  private OcbClassResolver() {
     super(MinecraftVersion.getVersion().getOcbPackage());
   }
 
