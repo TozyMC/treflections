@@ -39,9 +39,9 @@ public enum MinecraftVersion {
   v1_17_R1(1164, false);
 
   public static final MinecraftVersion CURRENT_VERSION;
-  private static final String NET_MINECRAFT_PACKAGE = "net.minecraft";
-  private static final String NMS_PACKAGE_PREFIX = "net.minecraft.server.";
-  private static final String OCB_PACKAGE_PREFIX = "org.bukkit.craftbukkit.";
+  public static final String NET_MINECRAFT_PACKAGE = "net.minecraft";
+  public static final String NMS_PACKAGE_PREFIX = "net.minecraft.server.";
+  public static final String OCB_PACKAGE_PREFIX = "org.bukkit.craftbukkit.";
 
   static {
     String packageVersion = "";

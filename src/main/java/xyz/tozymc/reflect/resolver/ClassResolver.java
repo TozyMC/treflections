@@ -1,34 +1,21 @@
 package xyz.tozymc.reflect.resolver;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 public class ClassResolver {
 
-  private final String classPackage;
   private final Map<String, Class<?>> resolvedClasses = new HashMap<>();
 
-  protected ClassResolver(@NotNull String classPackage) {this.classPackage = classPackage;}
-
-  private ClassResolver() {this("");}
+  protected ClassResolver() {}
 
   @Contract(pure = true)
   public static @NotNull ClassResolver resolver() {
     return ClassResolverHelper.INSTANCE;
-  }
-
-  @Contract(pure = true)
-  public static @NotNull NmsClassResolver nmsResolver() {
-    return NmsClassResolver.resolver();
-  }
-
-  @Contract(pure = true)
-  public static @NotNull OcbClassResolver ocbResolver() {
-    return OcbClassResolver.resolver();
   }
 
   public Class<?> resolve(String @NotNull ... names) {
@@ -44,31 +31,22 @@ public class ClassResolver {
     }
     String cannotResolveClasses = "Cannot resolve classes ";
     throw new RuntimeException(cannotResolveClasses + Arrays.toString(names),
-        new ClassCastException());
+        new ClassNotFoundException());
   }
 
   @SuppressWarnings("unchecked")
   public <T> Class<T> resolve(@NotNull String name) {
-    String className = formatClassName(name);
-    if (resolvedClasses.containsKey(className)) {
-      return (Class<T>) resolvedClasses.get(className);
+    if (resolvedClasses.containsKey(name)) {
+      return (Class<T>) resolvedClasses.get(name);
     }
     try {
-      Class<T> clazz = (Class<T>) Class.forName(className);
-      resolvedClasses.put(className, clazz);
+      Class<T> clazz = (Class<T>) Class.forName(name);
+      resolvedClasses.put(name, clazz);
       return clazz;
     } catch (ClassNotFoundException e) {
       String cannotResolveClass = "Cannot resolve class ";
-      throw new RuntimeException(cannotResolveClass + className, e.getCause());
+      throw new RuntimeException(cannotResolveClass + name, e.getCause());
     }
-  }
-
-  private String formatClassName(String name) {
-    return classPackage + '.' + name;
-  }
-
-  public @NotNull String getClassPackage() {
-    return classPackage;
   }
 
   private static class ClassResolverHelper {
