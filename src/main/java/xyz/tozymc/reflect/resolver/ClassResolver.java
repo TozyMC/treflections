@@ -21,6 +21,16 @@ public class ClassResolver {
     return ClassResolverHelper.INSTANCE;
   }
 
+  @Contract(pure = true)
+  public static @NotNull NmsClassResolver nmsResolver() {
+    return NmsClassResolver.resolver();
+  }
+
+  @Contract(pure = true)
+  public static @NotNull OcbClassResolver ocbResolver() {
+    return OcbClassResolver.resolver();
+  }
+
   public Class<?> resolve(String @NotNull ... names) {
     Class<?> clazz = null;
     for (String name : names) {
