@@ -2,9 +2,18 @@ package xyz.tozymc.reflect.accessor;
 
 import static xyz.tozymc.reflect.accessor.Accessor.Type.FIELD;
 import static xyz.tozymc.reflect.accessor.Accessor.Type.METHOD;
-import static xyz.tozymc.reflect.accessor.util.ErrorMessages.constructorAccessFailure;
-import static xyz.tozymc.reflect.accessor.util.ErrorMessages.fieldAccessFailure;
-import static xyz.tozymc.reflect.accessor.util.ErrorMessages.methodAccessFailure;
+import static xyz.tozymc.reflect.util.NotFoundMessages.constructorNotFound;
+import static xyz.tozymc.reflect.util.NotFoundMessages.fieldNotFound;
+import static xyz.tozymc.reflect.util.NotFoundMessages.methodNotFound;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import xyz.tozymc.reflect.accessor.Accessor.Query;
+import xyz.tozymc.reflect.accessor.Accessor.QueryBuilder;
+import xyz.tozymc.reflect.util.Constructors;
+import xyz.tozymc.reflect.util.Fields;
+import xyz.tozymc.reflect.util.Methods;
+import xyz.tozymc.util.Preconditions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,13 +21,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import xyz.tozymc.reflect.accessor.Accessor.Query;
-import xyz.tozymc.reflect.accessor.Accessor.QueryBuilder;
-import xyz.tozymc.reflect.accessor.Accessor.Type;
-import xyz.tozymc.util.Preconditions;
 
 public final class Accessors {
 
@@ -99,21 +101,21 @@ public final class Accessors {
   }
 
   public static FieldAccessor accessField(@NotNull Query query) {
-    Preconditions.checkArgument(query.type().equals(Type.FIELD), "Type must be FIELD");
+    Preconditions.checkArgument(query.type().equals(FIELD), "Type must be FIELD");
     Preconditions.checkArgument(!query.name().isEmpty(), "Name cannot be empty");
 
     if (accessedObjects.containsKey(query)) {
       return (FieldAccessor) accessedObjects.get(query);
     }
 
-    try {
-      Field field = query.clazz().getDeclaredField(query.name());
-      FieldAccessor accessed = new FieldAccessor(field);
-      accessedObjects.put(query, accessed);
-      return accessed;
-    } catch (NoSuchFieldException e) {
-      throw new RuntimeException(fieldAccessFailure(query), e.getCause());
+    Field field = Fields.getField(query.clazz(), query.name());
+    if (field == null) {
+      throw new NullPointerException(fieldNotFound(query.name()));
     }
+
+    FieldAccessor accessed = new FieldAccessor(field);
+    accessedObjects.put(query, accessed);
+    return accessed;
   }
 
   @SuppressWarnings("unchecked")
@@ -124,15 +126,14 @@ public final class Accessors {
       return (ConstructorAccessor<T>) accessedObjects.get(query);
     }
 
-    try {
-      Constructor<T> constructor = ((Class<T>) query.clazz()).getDeclaredConstructor(
-          query.paramTypes());
-      ConstructorAccessor<T> accessed = new ConstructorAccessor<>(constructor);
-      accessedObjects.put(query, accessed);
-      return accessed;
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(constructorAccessFailure(query), e.getCause());
+    Constructor<?> constructor = Constructors.getConstructor(query.clazz(), query.paramTypes());
+    if (constructor == null) {
+      throw new NullPointerException(constructorNotFound(query.clazz(), query.paramTypes()));
     }
+
+    ConstructorAccessor<T> accessed = new ConstructorAccessor<>((Constructor<T>) constructor);
+    accessedObjects.put(query, accessed);
+    return accessed;
   }
 
   public static MethodAccessor accessMethod(@NotNull Query query) {
@@ -143,13 +144,13 @@ public final class Accessors {
       return (MethodAccessor) accessedObjects.get(query);
     }
 
-    try {
-      Method method = query.clazz().getDeclaredMethod(query.name(), query.paramTypes());
-      MethodAccessor accessed = new MethodAccessor(method);
-      accessedObjects.put(query, accessed);
-      return accessed;
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(methodAccessFailure(query), e.getCause());
+    Method method = Methods.getMethod(query.clazz(), query.name(), query.paramTypes());
+    if (method == null) {
+      throw new NullPointerException(methodNotFound(query.name(), query.paramTypes()));
     }
+
+    MethodAccessor accessed = new MethodAccessor(method);
+    accessedObjects.put(query, accessed);
+    return accessed;
   }
 }
