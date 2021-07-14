@@ -1,10 +1,11 @@
-package xyz.tozymc.reflect.resolver;
+package xyz.tozymc.reflect.resolver.minecraft;
 
 import static xyz.tozymc.minecraft.MinecraftVersion.OCB_PACKAGE_PREFIX;
 import static xyz.tozymc.minecraft.MinecraftVersion.getVersion;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import xyz.tozymc.reflect.resolver.ClassResolver;
 
 public final class OcbClassResolver extends ClassResolver {
 

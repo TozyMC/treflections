@@ -1,10 +1,11 @@
-package xyz.tozymc.reflect.resolver;
+package xyz.tozymc.reflect.resolver.minecraft;
 
 import static xyz.tozymc.minecraft.MinecraftVersion.NET_MINECRAFT_PACKAGE;
 import static xyz.tozymc.minecraft.MinecraftVersion.getVersion;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import xyz.tozymc.reflect.resolver.ClassResolver;
 
 public final class NmsClassResolver extends ClassResolver {
 
