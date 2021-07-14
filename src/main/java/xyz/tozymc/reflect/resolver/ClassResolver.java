@@ -2,11 +2,14 @@ package xyz.tozymc.reflect.resolver;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import xyz.tozymc.reflect.resolver.wrapper.ClassWrapper;
+import xyz.tozymc.util.Preconditions;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ClassResolver {
 
   private final Map<String, Class<?>> resolvedClasses = new HashMap<>();
@@ -18,7 +21,21 @@ public class ClassResolver {
     return ClassResolverHelper.INSTANCE;
   }
 
+  public <T> ClassWrapper<T> resolveWrapper(@NotNull String name) {
+    Preconditions.checkNotNull(name, "Name cannot be null");
+
+    return new ClassWrapper<>(resolve(name));
+  }
+
+  public ClassWrapper<?> resolveWrapper(@NotNull String... names) {
+    Preconditions.checkNotNull(names, "Names cannot be null");
+
+    return new ClassWrapper<>(resolve(names));
+  }
+
   public Class<?> resolve(String @NotNull ... names) {
+    Preconditions.checkNotNull(names, "Names cannot be null");
+
     Class<?> clazz = null;
     for (String name : names) {
       try {
@@ -29,13 +46,13 @@ public class ClassResolver {
         return clazz;
       }
     }
-    String cannotResolveClasses = "Cannot resolve classes ";
-    throw new RuntimeException(cannotResolveClasses + Arrays.toString(names),
-        new ClassNotFoundException());
+    throw new RuntimeException("Cannot resolve classes " + Arrays.toString(names));
   }
 
   @SuppressWarnings("unchecked")
   public <T> Class<T> resolve(@NotNull String name) {
+    Preconditions.checkNotNull(name, "Name cannot be null");
+
     if (resolvedClasses.containsKey(name)) {
       return (Class<T>) resolvedClasses.get(name);
     }
@@ -44,8 +61,7 @@ public class ClassResolver {
       resolvedClasses.put(name, clazz);
       return clazz;
     } catch (ClassNotFoundException e) {
-      String cannotResolveClass = "Cannot resolve class ";
-      throw new RuntimeException(cannotResolveClass + name, e.getCause());
+      throw new RuntimeException("Cannot resolve class " + name);
     }
   }
 
