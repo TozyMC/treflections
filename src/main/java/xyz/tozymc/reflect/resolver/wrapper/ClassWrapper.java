@@ -30,6 +30,8 @@ public class ClassWrapper<T> {
   }
 
   public MethodAccessor getMethod(@NotNull String name, Class<?>... paramTypes) {
+    Preconditions.checkState(!name.isEmpty(), "Name cannot be empty");
+
     return Accessors.accessMethod(clazz, name, paramTypes);
   }
 }
