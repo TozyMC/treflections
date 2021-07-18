@@ -4,6 +4,12 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * An enum of all Minecraft packager version since 1.7.
+ *
+ * @author TozyMC
+ * @since 1.0
+ */
 public enum MinecraftVersion {
   UNKNOWN(-1),
 
@@ -67,26 +73,66 @@ public enum MinecraftVersion {
     this.nmsPackage = nmsPackage;
   }
 
+  /**
+   * Gets current Minecraft running version.
+   *
+   * @return Current Minecraft running version.
+   */
+  @Contract(pure = true)
   public static MinecraftVersion getVersion() {
     return CURRENT_VERSION;
   }
 
+  /**
+   * Checks if the current version is newer than the specified version.
+   *
+   * @param version Specified version to check.
+   * @return True if current version is newer than the specified version.
+   */
+  @Contract(pure = true)
   public boolean isNewerThan(@NotNull MinecraftVersion version) {
     return this.version >= version.version;
   }
 
+  /**
+   * Checks if the current version is older than the specified version.
+   *
+   * @param version Specified version to check.
+   * @return True if current version is older than the specified version.
+   */
   public boolean isOlderThan(@NotNull MinecraftVersion version) {
     return this.version < version.version;
   }
 
+  /**
+   * Checks if the current version is equal to the specified version.
+   *
+   * @param version Specified version to check.
+   * @return True if the current version is equal to the specified version.
+   */
   public boolean equals(@NotNull MinecraftVersion version) {
     return this.version == version.version;
   }
 
+  /**
+   * Checks if current version is in version range.
+   *
+   * @param oldVer Minimum allowed version
+   * @param newVer Maximum allowed version
+   * @return True if current version is in version range.
+   */
   public boolean isInRange(@NotNull MinecraftVersion oldVer, @NotNull MinecraftVersion newVer) {
     return isNewerThan(oldVer) && isOlderThan(newVer);
   }
 
+  /**
+   * Gets net.minecraft.server package string with version.
+   *
+   * <p><b>Notes: </b>Since Minecraft 1.17, this method always returns {@link
+   * #NET_MINECRAFT_PACKAGE}.
+   *
+   * @return Nms package string with version.
+   */
   @Contract(pure = true)
   public @NotNull String getNmsPackage() {
     if (nmsPackage) {
@@ -95,20 +141,44 @@ public enum MinecraftVersion {
     return NET_MINECRAFT_PACKAGE;
   }
 
+  /**
+   * Gets org.bukkit.craftbukkit package string with version.
+   *
+   * @return Ocb package string with version.
+   */
   @Contract(pure = true)
   public @NotNull String getOcbPackage() {
     return OCB_PACKAGE_PREFIX + name();
   }
 
+  /**
+   * Gets the package version.
+   *
+   * @return The package version.
+   */
   @Contract(pure = true)
   public @NotNull String getPackageVersion() {
     return name();
   }
 
+  /**
+   * Gets version in integer.
+   *
+   * <p>It's often used to compare versions.
+   *
+   * @return Version in int.
+   */
+  @Contract(pure = true)
   public int version() {
     return version;
   }
 
+  /**
+   * Checks if the version has net.minecraft.server package.
+   *
+   * @return True if the version has net.minecraft.server package.
+   */
+  @Contract(pure = true)
   public boolean isNmsPackage() {
     return nmsPackage;
   }

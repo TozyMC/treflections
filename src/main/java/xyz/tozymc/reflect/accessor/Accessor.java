@@ -1,17 +1,33 @@
 package xyz.tozymc.reflect.accessor;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Interface to mark accessor classes.
+ *
+ * @since 1.0
+ */
 public interface Accessor {
 
+  /**
+   * Represents the accessor type.
+   *
+   * @since 1.0
+   */
   enum Type {
     FIELD, METHOD
   }
 
+  /**
+   * The class that stores the query for the accessor.
+   *
+   * @author TozyMC
+   * @since 1.0
+   */
   class Query {
 
     private final Class<?> clazz;
@@ -77,6 +93,12 @@ public interface Accessor {
     }
   }
 
+  /**
+   * The class used to construct the query for the accessor.
+   *
+   * @author TozyMC
+   * @since 1.0
+   */
   class QueryBuilder {
 
     private final Class<?> clazz;
@@ -88,32 +110,74 @@ public interface Accessor {
       this.clazz = clazz;
     }
 
+    /**
+     * Creates new {@link QueryBuilder} instance with class.
+     *
+     * @param clazz Class to query.
+     * @return An instance of {@code QueryBuilder}.
+     */
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull QueryBuilder builder(@NotNull Class<?> clazz) {
       return new QueryBuilder(clazz);
     }
 
+    /**
+     * Creates new {@code QueryBuilder} instance with default value from {@code query}.
+     *
+     * @param query The default query.
+     * @return An instance of {@code QueryBuilder} with default value from {@code query}.
+     */
     public static @NotNull QueryBuilder builder(@NotNull Query query) {
       return builder(query.clazz).type(query.type)
           .name(query.name)
           .paramTypes(query.paramTypes);
     }
 
+    /**
+     * Set a name to use for the query.
+     *
+     * <p>The name is only used in case of field and method queries.
+     *
+     * @param name Name to use for the query.
+     * @return This object, for chaining.
+     */
     public QueryBuilder name(@NotNull String name) {
       this.name = name;
       return this;
     }
 
+    /**
+     * Set type of the query, used for caching.
+     *
+     * <p>If you want to query the constructor, use {@link Type#METHOD}.
+     *
+     * @param type Type of the query
+     * @return This object, for chaining.
+     */
     public QueryBuilder type(@NotNull Type type) {
       this.type = type;
       return this;
     }
 
+    /**
+     * Set the parameter types to use for the query.
+     *
+     * <p>The parameter types is only used in case of constructor and method queries.
+     *
+     * @param paramTypes Type to use for the query.
+     * @return This object, for chaining.
+     */
     public QueryBuilder paramTypes(@NotNull Class<?>... paramTypes) {
       this.paramTypes = paramTypes;
       return this;
     }
 
+    /**
+     * Creates new query for the accessor.
+     *
+     * @return A query for the accessor.
+     * @throws NullPointerException If type is null.
+     */
     public Query build() {
       if (type == null) {
         if (!name.isEmpty()) {

@@ -7,10 +7,28 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import xyz.tozymc.reflect.resolver.ClassResolver;
 
+/**
+ * {@code NmsClassResolver} provides methods to find nms class and cache it if the class is found.
+ *
+ * <p>This class automatically appends net.minecraft.server to the class name.
+ *
+ * @author TozyMC
+ * @see ClassResolver
+ * @since 1.0
+ */
 public final class NmsClassResolver extends ClassResolver {
 
-  private NmsClassResolver() {super();}
+  private NmsClassResolver() {
+    super();
+  }
 
+  /**
+   * Gets the {@code NmsClassWrapper} instance.
+   *
+   * <p>This class automatically appends net.minecraft.server to the class name.
+   *
+   * @return The {@code NmsClassWrapper} instance.
+   */
   @Contract(pure = true)
   public static @NotNull NmsClassResolver resolver() {
     return NmsClassResolverHelper.INSTANCE;
