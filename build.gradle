@@ -24,10 +24,34 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 test {
     useJUnitPlatform()
 }
 
 compileJava {
     options.encoding = 'UTF-8'
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    if (project.hasProperty("javadocExecutable")) {
+        executable = javadocExecutable
+    }
+    options {
+        charSet 'utf-8'
+        source '1.8'
+        bottom "Copyright &#169; ${Year.now()} TozyMC. All rights reserved."
+        links << 'https://docs.oracle.com/javase/8/docs/api/'
+        links << 'https://hub.spigotmc.org/javadocs/spigot/'
+        links << 'https://javadoc.io/doc/org.jetbrains/annotations/20.1.0/'
+    }
+    exclude 'xyz/tozymc/util/**'
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
