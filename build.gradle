@@ -1,9 +1,14 @@
+import java.time.Year
+
 plugins {
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
 }
 
 group 'xyz.tozymc'
 version '1.0-pre-release'
+description = 'Reflection libraries for working with multi Minecraft version.'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -54,4 +59,66 @@ javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = rootProject.name
+            from components.java
+            convertToProvidedScope(pom)
+            pom {
+                name = rootProject.name
+                description = project.description
+                url = 'https://github.com/TozyMC/treflections'
+                inceptionYear = '2021'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/TozyMC/commands-api/blob/main/LICENSE'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/TozyMC/treflections.git'
+                    developerConnection = 'scm:git:ssh://github.com:TozyMC/treflections.git'
+                    url = 'https://github.com/TozyMC/treflections'
+                }
+
+                developers {
+                    developer {
+                        id = 'tozymc'
+                        name = 'TozyMC'
+                        url = 'https://tozymc.xyz'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+}
+
+def convertToProvidedScope(pom) {
+    pom.withXml {
+        asNode().dependencies.'*'.findAll() {
+            configurations.api.allDependencies.find { dep ->
+                dep.name == it.artifactId.text()
+            }
+        }.each() {
+            it.scope*.value = 'provided'
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
