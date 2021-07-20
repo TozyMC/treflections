@@ -6,7 +6,7 @@ plugins {
     id 'signing'
 }
 
-group 'xyz.tozymc'
+group 'xyz.tozymc.spigot'
 version '1.0-pre-release'
 description = 'Reflection libraries for working with multi Minecraft version.'
 
@@ -53,7 +53,7 @@ javadoc {
         bottom "Copyright &#169; ${Year.now()} TozyMC. All rights reserved."
         links << 'https://docs.oracle.com/javase/8/docs/api/'
         links << 'https://hub.spigotmc.org/javadocs/spigot/'
-        links << 'https://javadoc.io/doc/org.jetbrains/annotations/20.1.0/'
+        links << 'https://javadoc.io/doc/org.jetbrains/annotations/21.0.1/'
     }
     exclude 'xyz/tozymc/util/**'
     if (JavaVersion.current().isJava9Compatible()) {
