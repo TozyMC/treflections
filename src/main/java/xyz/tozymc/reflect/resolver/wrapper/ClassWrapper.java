@@ -65,6 +65,7 @@ public class ClassWrapper<T> {
   /**
    * Finds and accesses the method in the class if the method is found.
    *
+   * @param name       Name of method.
    * @param paramTypes Types of method parameter.
    * @return Method accessor with method found.
    * @see Accessors#accessMethod(Class, String, Class[])
