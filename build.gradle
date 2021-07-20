@@ -76,7 +76,7 @@ publishing {
                 licenses {
                     license {
                         name = 'MIT License'
-                        url = 'https://github.com/TozyMC/commands-api/blob/main/LICENSE'
+                        url = 'https://github.com/TozyMC/treflections/blob/main/LICENSE'
                     }
                 }
 
